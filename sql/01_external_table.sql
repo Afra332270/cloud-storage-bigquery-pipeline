@@ -8,6 +8,7 @@ OPTIONS (
 );
 
 
+-- does not support autodetect
 CREATE OR REPLACE EXTERNAL TABLE `<glowing-bird-474605-c3>.raw.superstore_external`
 OPTIONS (
   format = 'CSV',
@@ -18,4 +19,11 @@ OPTIONS (
 
 
 
-SELECT * FROM `<glowing-bird-474605-c3>.raw.superstore_external` LIMIT 10;
+SELECT * FROM `glowing-bird-474605-c3.raw.superstore_external` LIMIT 10;
+
+SELECT COUNT(*) FROM `glowing-bird-474605-c3.raw.superstore_external`;
+
+SELECT
+  table_name,
+  table_type
+FROM `glowing-bird-474605-c3.raw.INFORMATION_SCHEMA.TABLES`;
