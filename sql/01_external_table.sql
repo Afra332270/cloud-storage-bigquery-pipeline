@@ -8,3 +8,6 @@ OPTIONS (
   autodetect = TRUE
 );
 
+
+
+SELECT * FROM `<glowing-bird-474605-c3>.raw.superstore_external` LIMIT 10;
