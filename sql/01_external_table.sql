@@ -17,7 +17,7 @@ OPTIONS (
   autodetect = TRUE
 );
 
-
+-- Reading, Inspecting and Validating the dataset (externally)
 
 SELECT * FROM `glowing-bird-474605-c3.raw.superstore_external` LIMIT 10;
 
@@ -27,3 +27,10 @@ SELECT
   table_name,
   table_type
 FROM `glowing-bird-474605-c3.raw.INFORMATION_SCHEMA.TABLES`;
+
+
+-- Checking column names and order
+
+SELECT column_name, data_type
+FROM `project.raw.INFORMATION_SCHEMA.COLUMNS`
+WHERE table_name = 'superstore_external';
