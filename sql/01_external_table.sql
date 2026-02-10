@@ -60,7 +60,7 @@ WHERE SAFE_CAST(sales AS FLOAT64) IS NULL;
 
 
 
--- This query looks for inconsistent date formats in the dataset. The SAFE.PARSE_DATE() function tries to convert each order_date value (a string) into a DATE value.
+-- This query checks to see if there are any null values in 'order_date'
 SELECT *
 FROM `glowing-bird-474605-c3.raw.superstore_external`
-WHERE SAFE.PARSE_DATE('%m/%d/%Y', order_date) IS NULL;
+WHERE order_date IS NULL;
