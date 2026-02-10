@@ -43,6 +43,7 @@ FROM `glowing-bird-474605-c3.raw.INFORMATION_SCHEMA.COLUMNS`
 WHERE table_name = 'superstore_external';
 
 
+
 -- Checking for the total number of rows and to see if there are any missing order_id values (null values).
 SELECT
   COUNT(*) AS total_rows,
@@ -50,6 +51,9 @@ SELECT
 FROM `glowing-bird-474605-c3.raw.superstore_external`;
 
 
+
+
+-- This query gives the number of rows where the sales value is not a float. The SAFE_CAST() function tries to converts each sales value into a number (float).
 SELECT COUNT(*)
 FROM `glowing-bird-474605-c3.raw.superstore_external`
 WHERE SAFE_CAST(sales AS FLOAT64) IS NULL;
