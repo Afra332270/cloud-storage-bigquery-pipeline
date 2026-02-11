@@ -37,10 +37,15 @@ FROM `glowing-bird-474605-c3.raw.superstore_native`;
 
 
 
+SELECT * FROM `glowing-bird-474605-c3.raw.superstore_native` WHERE customer_name IS NULL;
+
+
+
 
 SELECT COUNT(*)
 FROM `glowing-bird-474605-c3.raw.superstore_native`
 WHERE sales < 0;
+
 
 
 
@@ -52,14 +57,75 @@ FROM `glowing-bird-474605-c3.raw.superstore_native`;
 
 
 
+SELECT * FROM `glowing-bird-474605-c3.raw.superstore_native` WHERE sales>10000;
+
+
+
 SELECT
-  *
-FROM `glowing-bird-474605-c3.raw.superstore_native` WHERE sales>10000;
+  APPROX_QUANTILES(sales, 100)[OFFSET(95)] AS p95,
+  APPROX_QUANTILES(sales, 100)[OFFSET(99)] AS p99
+FROM `glowing-bird-474605-c3.raw.superstore_native`;
+
+
+
+
+SELECT *
+FROM `project.raw.superstore_native`
+WHERE sales >
+(
+  SELECT APPROX_QUANTILES(sales, 100)[OFFSET(99)]
+  FROM `glowing-bird-474605-c3.raw.superstore_native`
+);
+
+
+
+
+WITH stats AS (
+  SELECT
+    APPROX_QUANTILES(sales, 4)[OFFSET(1)] AS q1,
+    APPROX_QUANTILES(sales, 4)[OFFSET(3)] AS q3
+  FROM `project.raw.superstore_native`
+)
+SELECT *
+FROM `glowing-bird-474605-c3.raw.superstore_native`, stats
+WHERE sales > (q3 + 1.5 * (q3 - q1));
+
+
 
 
 SELECT
-  *
-FROM `glowing-bird-474605-c3.raw.superstore_native` WHERE customer_name IS NULL;
+  MIN(sales),
+  MAX(sales),
+  APPROX_QUANTILES(sales, 10)
+FROM `glowing-bird-474605-c3.raw.superstore_native`;
 
 
 
+
+SELECT
+  order_id,
+  sales,
+  product_name,
+  category
+FROM `glowing-bird-474605-c3.raw.superstore_native`
+WHERE sales >
+(
+  SELECT APPROX_QUANTILES(sales, 100)[OFFSET(99)]
+  FROM `glowing-bird-474605-c3.raw.superstore_native`
+)
+ORDER BY sales DESC;
+
+
+
+
+
+CREATE OR REPLACE TABLE `glowing-bird-474605-c3.analytics.sales_with_outlier_flag` AS
+SELECT *,
+  CASE
+    WHEN sales >
+      (SELECT APPROX_QUANTILES(sales, 100)[OFFSET(99)]
+       FROM `glowing-bird-474605-c3.raw.superstore_native`)
+    THEN 'outlier'
+    ELSE 'normal'
+  END AS sales_flag
+FROM `glowing-bird-474605-c3.raw.superstore_native`;
